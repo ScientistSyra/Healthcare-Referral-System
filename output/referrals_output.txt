@@ -1,0 +1,34 @@
+----- REFERRAL -----
+Referral ID: 
+Patient: 
+NHS Number: TEMP
+Referring Clinician: 
+Referred To: 
+Urgency Level: 
+Clinical Summary:
+
+--------------------
+
+----- REFERRAL -----
+Referral ID: 
+Patient: 
+NHS Number: TEMP
+Referring Clinician: 
+Referred To: 
+Urgency Level: 
+Clinical Summary:
+
+--------------------
+
+----- REFERRAL -----
+Referral ID: 4555
+Patient ID: 333
+Referring Clinician: 666
+Referred To Facility: dgfg
+Urgency: fgfd
+Reason: fgf
+Status: grf
+Clinical Summary:
+fgf
+--------------------
+
