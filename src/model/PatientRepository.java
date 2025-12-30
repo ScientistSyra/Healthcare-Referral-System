@@ -9,24 +9,30 @@ public class PatientRepository {
     private static final String FILE_PATH = "data/patients.csv";
 
     public void loadPatients() {
-        List<String[]> rows = CSVReader.read(FILE_PATH);
+        List<String[]> rows = CSVReader.read("data/patients.csv");
         patients.clear();
 
         for (String[] row : rows) {
-            // Skip header row
-            if (row[0].equalsIgnoreCase("ID") || row[0].equalsIgnoreCase("patient_id")) {
+
+            if (row[0].equalsIgnoreCase("patient_id")) {
                 continue;
             }
 
             Patient patient = new Patient(
-                    row[0], // Patient ID
-                    row[1], // Full Name
-                    row[2], // DOB
-                    row[3], // NHS Number
-                    row[4], // Gender
-                    row[5], // Phone
-                    row[6], // Email
-                    row[7]  // GP Surgery ID
+                    row[0],  // patient_id
+                    row[1],  // first_name
+                    row[2],  // last_name
+                    row[3],  // date_of_birth
+                    row[4],  // nhs_number
+                    row[5],  // gender
+                    row[6],  // phone_number
+                    row[7],  // email
+                    row[8],  // address
+                    row[9],  // postcode
+                    row[10], // emergency_contact_name
+                    row[11], // emergency_contact_phone
+                    row[12], // registration_date
+                    row[13]  // gp_surgery_id
             );
 
             patients.add(patient);
