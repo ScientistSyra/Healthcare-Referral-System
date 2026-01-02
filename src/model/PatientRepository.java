@@ -1,19 +1,24 @@
 package model;
 
-import java.util.*;
 import util.CSVReader;
+import util.CSVWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PatientRepository {
 
     private List<Patient> patients = new ArrayList<>();
     private static final String FILE_PATH = "data/patients.csv";
 
+    // ================= LOAD =================
     public void loadPatients() {
-        List<String[]> rows = CSVReader.read("data/patients.csv");
+        List<String[]> rows = CSVReader.read(FILE_PATH);
         patients.clear();
 
         for (String[] row : rows) {
 
+            // Skip header
             if (row[0].equalsIgnoreCase("patient_id")) {
                 continue;
             }
@@ -39,19 +44,33 @@ public class PatientRepository {
         }
     }
 
-
+    // ================= READ =================
     public List<Patient> getAllPatients() {
         return patients;
     }
 
+    // ================= CREATE =================
     public void addPatient(Patient patient) {
         patients.add(patient);
+        rewriteCSV();
     }
 
+    // ================= UPDATE =================
+    public void updatePatient(Patient oldPatient, Patient newPatient) {
+        int index = patients.indexOf(oldPatient);
+        if (index != -1) {
+            patients.set(index, newPatient);
+            rewriteCSV();
+        }
+    }
+
+    // ================= DELETE =================
     public void removePatient(Patient patient) {
         patients.remove(patient);
+        rewriteCSV();
     }
 
+    // ================= FIND =================
     public Patient findByNhsNumber(String nhsNumber) {
         for (Patient p : patients) {
             if (p.getNhsNumber().equals(nhsNumber)) {
@@ -59,5 +78,37 @@ public class PatientRepository {
             }
         }
         return null;
+    }
+
+    // ================= CSV WRITE =================
+    private void rewriteCSV() {
+
+        // Write header
+        CSVWriter.overwrite(FILE_PATH,
+                "patient_id,first_name,last_name,date_of_birth,nhs_number,gender," +
+                "phone_number,email,address,postcode,emergency_contact_name," +
+                "emergency_contact_phone,registration_date,gp_surgery_id"
+        );
+
+        // Write records
+        for (Patient p : patients) {
+            String line = String.join(",",
+                    p.getPatientId(),
+                    p.getFirstName(),
+                    p.getLastName(),
+                    p.getDateOfBirth(),
+                    p.getNhsNumber(),
+                    p.getGender(),
+                    p.getPhone(),
+                    p.getEmail(),
+                    p.getAddress(),
+                    p.getPostcode(),
+                    p.getEmergencyContactName(),
+                    p.getEmergencyContactPhone(),
+                    p.getRegistrationDate(),
+                    p.getGpSurgeryId()
+            );
+            CSVWriter.append(FILE_PATH, line);
+        }
     }
 }
