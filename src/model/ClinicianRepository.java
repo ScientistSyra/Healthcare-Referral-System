@@ -43,9 +43,15 @@ public class ClinicianRepository {
         saveClinician(clinician);
     }
 
+    // EXISTING METHOD
     public void deleteClinician(Clinician clinician) {
         clinicians.remove(clinician);
         // CSV rewrite not required by rubric
+    }
+
+    // ✅ ADDED METHOD (FIX)
+    public void removeClinician(Clinician clinician) {
+        deleteClinician(clinician);
     }
 
     public Clinician findById(String clinicianId) {
