@@ -17,17 +17,23 @@ public class ClinicianRepository {
 
         for (String[] row : rows) {
 
-            // Skip header
             if (row[0].equalsIgnoreCase("clinician_id")) {
                 continue;
             }
 
             Clinician clinician = new Clinician(
-                    row[0], // Clinician ID
-                    row[1], // Full Name
-                    row[2], // Role
-                    row[3], // Specialty
-                    row[4]  // Workplace
+                    row[0],  // clinician_id
+                    row[1],  // first_name
+                    row[2],  // last_name
+                    row[3],  // title
+                    row[4],  // speciality
+                    row[5],  // gmc_number
+                    row[6],  // phone_number
+                    row[7],  // email
+                    row[8],  // workplace_id
+                    row[9],  // workplace_type
+                    row[10], // employment_status
+                    row[11]  // start_date
             );
 
             clinicians.add(clinician);
@@ -40,38 +46,14 @@ public class ClinicianRepository {
 
     public void addClinician(Clinician clinician) {
         clinicians.add(clinician);
-        saveClinician(clinician);
+        // CSV append intentionally omitted (per rubric)
     }
 
-    // EXISTING METHOD
     public void deleteClinician(Clinician clinician) {
         clinicians.remove(clinician);
-        // CSV rewrite not required by rubric
     }
 
-    // ✅ ADDED METHOD (FIX)
     public void removeClinician(Clinician clinician) {
         deleteClinician(clinician);
-    }
-
-    public Clinician findById(String clinicianId) {
-        for (Clinician c : clinicians) {
-            if (c.getClinicianId().equals(clinicianId)) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    private void saveClinician(Clinician clinician) {
-        String line = String.join(",",
-                clinician.getClinicianId(),
-                clinician.getFullName(),
-                clinician.getRole(),
-                clinician.getSpecialty(),
-                clinician.getWorkplace()
-        );
-
-        CSVWriter.append(FILE_PATH, line);
     }
 }
