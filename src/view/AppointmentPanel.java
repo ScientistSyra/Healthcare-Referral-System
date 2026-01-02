@@ -22,9 +22,10 @@ public class AppointmentPanel extends JPanel {
                         "Appointment ID",
                         "Patient ID",
                         "Clinician ID",
+                        "Facility ID",
                         "Date",
                         "Time",
-                        "Reason",
+                        "Duration (min)",
                         "Status"
                 }, 0
         );
@@ -44,9 +45,10 @@ public class AppointmentPanel extends JPanel {
                     a.getAppointmentId(),
                     a.getPatientId(),
                     a.getClinicianId(),
-                    a.getDate(),
-                    a.getTime(),
-                    a.getReason(),
+                    a.getFacilityId(),
+                    a.getAppointmentDate(),
+                    a.getAppointmentTime(),
+                    a.getDurationMinutes(),
                     a.getStatus()
             });
         }
@@ -58,54 +60,16 @@ public class AppointmentPanel extends JPanel {
         JButton addBtn = new JButton("Add Appointment");
         JButton deleteBtn = new JButton("Delete Appointment");
 
-        addBtn.addActionListener(e -> addAppointment());
+        addBtn.addActionListener(e -> JOptionPane.showMessageDialog(
+                this, "Add Appointment not implemented yet."
+        ));
+
         deleteBtn.addActionListener(e -> deleteAppointment());
 
         panel.add(addBtn);
         panel.add(deleteBtn);
 
         return panel;
-    }
-
-    private void addAppointment() {
-
-        JTextField id = new JTextField();
-        JTextField patientId = new JTextField();
-        JTextField clinicianId = new JTextField();
-        JTextField date = new JTextField();
-        JTextField time = new JTextField();
-        JTextField reason = new JTextField();
-        JTextField status = new JTextField();
-
-        Object[] fields = {
-                "Appointment ID:", id,
-                "Patient ID:", patientId,
-                "Clinician ID:", clinicianId,
-                "Date:", date,
-                "Time:", time,
-                "Reason:", reason,
-                "Status:", status
-        };
-
-        int option = JOptionPane.showConfirmDialog(
-                this, fields, "Add Appointment", JOptionPane.OK_CANCEL_OPTION
-        );
-
-        if (option == JOptionPane.OK_OPTION) {
-
-            Appointment appointment = new Appointment(
-                    id.getText(),
-                    patientId.getText(),
-                    clinicianId.getText(),
-                    date.getText(),
-                    time.getText(),
-                    reason.getText(),
-                    status.getText()
-            );
-
-            controller.addAppointment(appointment);
-            loadTableData();
-        }
     }
 
     private void deleteAppointment() {
@@ -125,7 +89,8 @@ public class AppointmentPanel extends JPanel {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            Appointment appointment = controller.getAllAppointments().get(row);
+            Appointment appointment =
+                    controller.getAllAppointments().get(row);
             controller.deleteAppointment(appointment);
             loadTableData();
         }
