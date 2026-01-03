@@ -19,13 +19,22 @@ public class ReferralPanel extends JPanel {
 
         tableModel = new DefaultTableModel(
                 new String[]{
-                        "Referral ID",
-                        "Patient ID",
-                        "Clinician ID",
-                        "Facility ID",
-                        "Date",
-                        "Urgency",
-                        "Status"
+                        "referral_id",
+                        "patient_id",
+                        "referring_clinician_id",
+                        "referred_to_clinician_id",
+                        "referring_facility_id",
+                        "referred_to_facility_id",
+                        "referral_date",
+                        "urgency_level",
+                        "referral_reason",
+                        "clinical_summary",
+                        "requested_investigations",
+                        "status",
+                        "appointment_id",
+                        "notes",
+                        "created_date",
+                        "last_updated"
                 }, 0
         );
 
@@ -36,6 +45,9 @@ public class ReferralPanel extends JPanel {
         add(createButtonPanel(), BorderLayout.SOUTH);
     }
 
+    /* =========================
+       LOAD TABLE DATA
+       ========================= */
     private void loadTableData() {
         tableModel.setRowCount(0);
 
@@ -44,14 +56,26 @@ public class ReferralPanel extends JPanel {
                     r.getReferralId(),
                     r.getPatientId(),
                     r.getReferringClinicianId(),
+                    r.getReferredToClinicianId(),
+                    r.getReferringFacilityId(),
                     r.getReferredToFacilityId(),
                     r.getReferralDate(),
                     r.getUrgencyLevel(),
-                    r.getStatus()
+                    r.getReferralReason(),
+                    r.getClinicalSummary(),
+                    r.getRequestedInvestigations(),
+                    r.getStatus(),
+                    r.getAppointmentId(),
+                    r.getNotes(),
+                    r.getCreatedDate(),
+                    r.getLastUpdated()
             });
         }
     }
 
+    /* =========================
+       BUTTON PANEL
+       ========================= */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 
@@ -67,46 +91,73 @@ public class ReferralPanel extends JPanel {
         return panel;
     }
 
+    /* =========================
+       ADD REFERRAL (FIXED)
+       ========================= */
     private void addReferral() {
 
-        JTextField id = new JTextField();
+        JTextField referralId = new JTextField();
         JTextField patientId = new JTextField();
-        JTextField clinicianId = new JTextField();
-        JTextField facilityId = new JTextField();
-        JTextField date = new JTextField();
-        JTextField urgency = new JTextField();
-        JTextField reason = new JTextField();
+        JTextField referringClinicianId = new JTextField();
+        JTextField referredToClinicianId = new JTextField();
+        JTextField referringFacilityId = new JTextField();
+        JTextField referredToFacilityId = new JTextField();
+        JTextField referralDate = new JTextField();
+        JTextField urgencyLevel = new JTextField();
+        JTextField referralReason = new JTextField();
+        JTextArea clinicalSummary = new JTextArea(3, 20);
+        JTextField requestedInvestigations = new JTextField();
         JTextField status = new JTextField();
-        JTextArea summary = new JTextArea(3, 20);
+        JTextField appointmentId = new JTextField();
+        JTextField notes = new JTextField();
+        JTextField createdDate = new JTextField();
+        JTextField lastUpdated = new JTextField();
 
         Object[] fields = {
-                "Referral ID:", id,
+                "Referral ID:", referralId,
                 "Patient ID:", patientId,
-                "Referring Clinician ID:", clinicianId,
-                "Referred To Facility ID:", facilityId,
-                "Referral Date:", date,
-                "Urgency:", urgency,
-                "Referral Reason:", reason,
+                "Referring Clinician ID:", referringClinicianId,
+                "Referred To Clinician ID:", referredToClinicianId,
+                "Referring Facility ID:", referringFacilityId,
+                "Referred To Facility ID:", referredToFacilityId,
+                "Referral Date:", referralDate,
+                "Urgency Level:", urgencyLevel,
+                "Referral Reason:", referralReason,
+                "Clinical Summary:", new JScrollPane(clinicalSummary),
+                "Requested Investigations:", requestedInvestigations,
                 "Status:", status,
-                "Clinical Summary:", new JScrollPane(summary)
+                "Appointment ID:", appointmentId,
+                "Notes:", notes,
+                "Created Date:", createdDate,
+                "Last Updated:", lastUpdated
         };
 
         int option = JOptionPane.showConfirmDialog(
-                this, fields, "Add Referral", JOptionPane.OK_CANCEL_OPTION
+                this,
+                fields,
+                "Add Referral",
+                JOptionPane.OK_CANCEL_OPTION
         );
 
         if (option == JOptionPane.OK_OPTION) {
 
             Referral referral = new Referral(
-                    id.getText(),
+                    referralId.getText(),
                     patientId.getText(),
-                    clinicianId.getText(),
-                    facilityId.getText(),
-                    date.getText(),
-                    urgency.getText(),
-                    reason.getText(),
-                    summary.getText(),
-                    status.getText()
+                    referringClinicianId.getText(),
+                    referredToClinicianId.getText(),
+                    referringFacilityId.getText(),
+                    referredToFacilityId.getText(),
+                    referralDate.getText(),
+                    urgencyLevel.getText(),
+                    referralReason.getText(),
+                    clinicalSummary.getText(),
+                    requestedInvestigations.getText(),
+                    status.getText(),
+                    appointmentId.getText(),
+                    notes.getText(),
+                    createdDate.getText(),
+                    lastUpdated.getText()
             );
 
             controller.createReferral(referral);
@@ -114,12 +165,17 @@ public class ReferralPanel extends JPanel {
         }
     }
 
+    /* =========================
+       DELETE REFERRAL
+       ========================= */
     private void deleteReferral() {
         int row = table.getSelectedRow();
 
         if (row == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Please select a referral to delete.");
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please select a referral to delete."
+            );
             return;
         }
 
@@ -131,7 +187,8 @@ public class ReferralPanel extends JPanel {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            Referral referral = controller.getAllReferrals().get(row);
+            Referral referral =
+                    controller.getAllReferrals().get(row);
             controller.deleteReferral(referral);
             loadTableData();
         }

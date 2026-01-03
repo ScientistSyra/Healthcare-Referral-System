@@ -3,42 +3,28 @@ package model;
 import util.CSVReader;
 import util.CSVWriter;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReferralRepository {
 
     private List<Referral> referrals = new ArrayList<>();
-
-    private static final String CSV_FILE = "data/referrals.csv";
-    private static final String OUTPUT_FILE = "output/referrals_output.txt";
+    private static final String FILE_PATH = "data/referrals.csv";
 
     public void loadReferrals() {
-        List<String[]> rows = CSVReader.read(CSV_FILE);
+        List<String[]> rows = CSVReader.read(FILE_PATH);
         referrals.clear();
 
-        for (String[] row : rows) {
+        // ✅ ALWAYS skip header row
+        for (int i = 1; i < rows.size(); i++) {
+            String[] row = rows.get(i);
 
-            // Skip header
-            if (row[0].equalsIgnoreCase("referral_id")) {
-                continue;
-            }
-
-            Referral referral = new Referral(
-                    row[0],  // referral_id
-                    row[1],  // patient_id
-                    row[2],  // referring_clinician_id
-                    row[5],  // referred_to_facility_id
-                    row[6],  // referral_date
-                    row[7],  // urgency_level
-                    row[8],  // referral_reason
-                    row[9],  // clinical_summary
-                    row[11]  // status
-            );
-
-            referrals.add(referral);
+            referrals.add(new Referral(
+                    row[0], row[1], row[2], row[3],
+                    row[4], row[5], row[6], row[7],
+                    row[8], row[9], row[10], row[11],
+                    row[12], row[13], row[14], row[15]
+            ));
         }
     }
 
@@ -48,51 +34,42 @@ public class ReferralRepository {
 
     public void addReferral(Referral referral) {
         referrals.add(referral);
-        saveReferral(referral);
+        rewriteCSV();
     }
 
     public void deleteReferral(Referral referral) {
         referrals.remove(referral);
+        rewriteCSV();
     }
 
-    private void saveReferral(Referral referral) {
+    private void rewriteCSV() {
 
-        String csvLine = String.join(",",
-                referral.getReferralId(),
-                referral.getPatientId(),
-                referral.getReferringClinicianId(),
-                "", "",                              // clinician + facility placeholders
-                referral.getReferredToFacilityId(),
-                referral.getReferralDate(),
-                referral.getUrgencyLevel(),
-                referral.getReferralReason(),
-                referral.getClinicalSummary(),
-                "",                                  // requested investigations
-                referral.getStatus()
+        CSVWriter.overwrite(FILE_PATH,
+                "referral_id,patient_id,referring_clinician_id,referred_to_clinician_id," +
+                "referring_facility_id,referred_to_facility_id,referral_date,urgency_level," +
+                "referral_reason,clinical_summary,requested_investigations,status," +
+                "appointment_id,notes,created_date,last_updated"
         );
 
-        CSVWriter.append(CSV_FILE, csvLine);
-
-        writeReferralText(referral);
-    }
-
-    private void writeReferralText(Referral referral) {
-        try (FileWriter fw = new FileWriter(OUTPUT_FILE, true)) {
-
-            fw.write("----- REFERRAL -----\n");
-            fw.write("Referral ID: " + referral.getReferralId() + "\n");
-            fw.write("Patient ID: " + referral.getPatientId() + "\n");
-            fw.write("Referring Clinician: " + referral.getReferringClinicianId() + "\n");
-            fw.write("Referred To Facility: " + referral.getReferredToFacilityId() + "\n");
-            fw.write("Urgency: " + referral.getUrgencyLevel() + "\n");
-            fw.write("Reason: " + referral.getReferralReason() + "\n");
-            fw.write("Status: " + referral.getStatus() + "\n");
-            fw.write("Clinical Summary:\n");
-            fw.write(referral.getClinicalSummary() + "\n");
-            fw.write("--------------------\n\n");
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Referral r : referrals) {
+            CSVWriter.append(FILE_PATH, String.join(",",
+                    r.getReferralId(),
+                    r.getPatientId(),
+                    r.getReferringClinicianId(),
+                    r.getReferredToClinicianId(),
+                    r.getReferringFacilityId(),
+                    r.getReferredToFacilityId(),
+                    r.getReferralDate(),
+                    r.getUrgencyLevel(),
+                    r.getReferralReason(),
+                    r.getClinicalSummary(),
+                    r.getRequestedInvestigations(),
+                    r.getStatus(),
+                    r.getAppointmentId(),
+                    r.getNotes(),
+                    r.getCreatedDate(),
+                    r.getLastUpdated()
+            ));
         }
     }
 }
