@@ -19,15 +19,14 @@ public class PrescriptionPanel extends JPanel {
         setLayout(new BorderLayout());
 
         tableModel = new DefaultTableModel(
-                new String[]{
-                        "Prescription ID",
-                        "Patient ID",
-                        "Medication",
-                        "Dosage",
-                        "Pharmacy",
-                        "Status"
-                }, 0
-        );
+        	    new String[]{
+        	        "Clinician ID", "Appointment ID", "Prescription Date",
+        	        "Medication", "Dosage", "Frequency", "Duration (days)",
+        	        "Quantity", "Instructions", "Pharmacy",
+        	        "Status", "Issue Date", "Collection Date"
+        	    }, 0
+        	);
+
 
         table = new JTable(tableModel);
         loadTableData();
@@ -43,14 +42,21 @@ public class PrescriptionPanel extends JPanel {
         tableModel.setRowCount(0);
 
         for (Prescription p : controller.getAllPrescriptions()) {
-            tableModel.addRow(new Object[]{
-                    p.getPrescriptionId(),
-                    p.getPatientId(),
-                    p.getMedication(),
-                    p.getDosage(),
-                    p.getPharmacy(),
-                    p.getCollectionStatus()
-            });
+        	tableModel.addRow(new Object[]{
+        		    p.getClinicianId(),
+        		    p.getAppointmentId(),
+        		    p.getPrescriptionDate(),
+        		    p.getMedicationName(),
+        		    p.getDosage(),
+        		    p.getFrequency(),
+        		    p.getDurationDays(),
+        		    p.getQuantity(),
+        		    p.getInstructions(),
+        		    p.getPharmacyName(),
+        		    p.getStatus(),
+        		    p.getIssueDate(),
+        		    p.getCollectionDate()
+        		});
         }
     }
 

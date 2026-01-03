@@ -22,7 +22,6 @@ public class PrescriptionController {
 
     public void addPrescription(Prescription prescription) {
         prescriptionRepository.addPrescription(prescription);
-        prescriptionRepository.savePrescription(prescription);
     }
 
     public void deletePrescription(Prescription prescription) {

@@ -17,21 +17,15 @@ public class PrescriptionRepository {
 
         for (String[] row : rows) {
 
-            // Skip header row
-            if (row[0].equalsIgnoreCase("prescription_id")) {
+            if (row[0].equalsIgnoreCase("clinician_id")) {
                 continue;
             }
 
-            Prescription prescription = new Prescription(
-                    row[0], // Prescription ID
-                    row[1], // Patient ID
-                    row[2], // Medication
-                    row[3], // Dosage
-                    row[4], // Pharmacy
-                    row[5]  // Collection Status
-            );
-
-            prescriptions.add(prescription);
+            prescriptions.add(new Prescription(
+                    row[0], row[1], row[2], row[3], row[4],
+                    row[5], row[6], row[7], row[8],
+                    row[9], row[10], row[11], row[12]
+            ));
         }
     }
 
@@ -41,25 +35,42 @@ public class PrescriptionRepository {
 
     public void addPrescription(Prescription prescription) {
         prescriptions.add(prescription);
-        savePrescription(prescription);
+        rewriteCSV();
     }
 
     public void deletePrescription(Prescription prescription) {
         prescriptions.remove(prescription);
-        // (Optional: rewrite CSV — not required by marking criteria)
+        rewriteCSV();
     }
 
-    private void savePrescription(Prescription prescription) {
+    public void removePrescription(Prescription prescription) {
+        deletePrescription(prescription);
+    }
 
-        String line = String.join(",",
-                prescription.getPrescriptionId(),
-                prescription.getPatientId(),
-                prescription.getMedication(),
-                prescription.getDosage(),
-                prescription.getPharmacy(),
-                prescription.getCollectionStatus()
+    private void rewriteCSV() {
+
+        CSVWriter.overwrite(FILE_PATH,
+                "clinician_id,appointment_id,prescription_date,medication_name," +
+                "dosage,frequency,duration_days,quantity,instructions," +
+                "pharmacy_name,status,issue_date,collection_date"
         );
 
-        CSVWriter.append(FILE_PATH, line);
+        for (Prescription p : prescriptions) {
+            CSVWriter.append(FILE_PATH, String.join(",",
+                    p.getClinicianId(),
+                    p.getAppointmentId(),
+                    p.getPrescriptionDate(),
+                    p.getMedicationName(),
+                    p.getDosage(),
+                    p.getFrequency(),
+                    p.getDurationDays(),
+                    p.getQuantity(),
+                    p.getInstructions(),
+                    p.getPharmacyName(),
+                    p.getStatus(),
+                    p.getIssueDate(),
+                    p.getCollectionDate()
+            ));
+        }
     }
 }
