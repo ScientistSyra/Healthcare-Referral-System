@@ -16,27 +16,12 @@ public class ClinicianRepository {
         clinicians.clear();
 
         for (String[] row : rows) {
+            if (row[0].equalsIgnoreCase("clinician_id")) continue;
 
-            if (row[0].equalsIgnoreCase("clinician_id")) {
-                continue;
-            }
-
-            Clinician clinician = new Clinician(
-                    row[0],  // clinician_id
-                    row[1],  // first_name
-                    row[2],  // last_name
-                    row[3],  // title
-                    row[4],  // speciality
-                    row[5],  // gmc_number
-                    row[6],  // phone_number
-                    row[7],  // email
-                    row[8],  // workplace_id
-                    row[9],  // workplace_type
-                    row[10], // employment_status
-                    row[11]  // start_date
-            );
-
-            clinicians.add(clinician);
+            clinicians.add(new Clinician(
+                    row[0], row[1], row[2], row[3], row[4], row[5],
+                    row[6], row[7], row[8], row[9], row[10], row[11]
+            ));
         }
     }
 
@@ -46,14 +31,37 @@ public class ClinicianRepository {
 
     public void addClinician(Clinician clinician) {
         clinicians.add(clinician);
-        // CSV append intentionally omitted (per rubric)
-    }
-
-    public void deleteClinician(Clinician clinician) {
-        clinicians.remove(clinician);
+        rewriteCSV();
     }
 
     public void removeClinician(Clinician clinician) {
-        deleteClinician(clinician);
+        clinicians.remove(clinician);
+        rewriteCSV();
+    }
+
+    private void rewriteCSV() {
+
+        CSVWriter.overwrite(FILE_PATH,
+                "clinician_id,first_name,last_name,title,speciality," +
+                "gmc_number,phone_number,email,workplace_id,workplace_type," +
+                "employment_status,start_date"
+        );
+
+        for (Clinician c : clinicians) {
+            CSVWriter.append(FILE_PATH, String.join(",",
+                    c.getClinicianId(),
+                    c.getFirstName(),
+                    c.getLastName(),
+                    c.getTitle(),
+                    c.getSpeciality(),
+                    c.getGmcNumber(),
+                    c.getPhoneNumber(),
+                    c.getEmail(),
+                    c.getWorkplaceId(),
+                    c.getWorkplaceType(),
+                    c.getEmploymentStatus(),
+                    c.getStartDate()
+            ));
+        }
     }
 }

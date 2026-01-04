@@ -15,12 +15,20 @@ public class Clinician {
     private String employmentStatus;
     private String startDate;
 
-    public Clinician(String clinicianId, String firstName, String lastName,
-                     String title, String speciality, String gmcNumber,
-                     String phoneNumber, String email, String workplaceId,
-                     String workplaceType, String employmentStatus,
-                     String startDate) {
-
+    public Clinician(
+            String clinicianId,
+            String firstName,
+            String lastName,
+            String title,
+            String speciality,
+            String gmcNumber,
+            String phoneNumber,
+            String email,
+            String workplaceId,
+            String workplaceType,
+            String employmentStatus,
+            String startDate
+    ) {
         this.clinicianId = clinicianId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,15 +48,15 @@ public class Clinician {
     public String getLastName() { return lastName; }
     public String getTitle() { return title; }
     public String getSpeciality() { return speciality; }
+    public String getGmcNumber() { return gmcNumber; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getEmail() { return email; }
+    public String getWorkplaceId() { return workplaceId; }
     public String getWorkplaceType() { return workplaceType; }
     public String getEmploymentStatus() { return employmentStatus; }
+    public String getStartDate() { return startDate; }
 
     public String getFullName() {
         return firstName + " " + lastName;
-    }
-
-    @Override
-    public String toString() {
-        return clinicianId + " - " + getFullName();
     }
 }

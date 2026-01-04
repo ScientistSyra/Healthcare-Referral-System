@@ -6,25 +6,25 @@ import model.ClinicianRepository;
 
 public class ClinicianController {
 
-    private ClinicianRepository clinicianRepository;
+    private ClinicianRepository repository;
 
-    public ClinicianController(ClinicianRepository clinicianRepository) {
-        this.clinicianRepository = clinicianRepository;
+    public ClinicianController(ClinicianRepository repository) {
+        this.repository = repository;
     }
 
     public void loadClinicians() {
-        clinicianRepository.loadClinicians();
+        repository.loadClinicians();
     }
 
     public List<Clinician> getAllClinicians() {
-        return clinicianRepository.getAllClinicians();
+        return repository.getAllClinicians();
     }
 
     public void addClinician(Clinician clinician) {
-        clinicianRepository.addClinician(clinician);
+        repository.addClinician(clinician);
     }
 
     public void deleteClinician(Clinician clinician) {
-        clinicianRepository.removeClinician(clinician);
+        repository.removeClinician(clinician);
     }
 }
