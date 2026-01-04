@@ -6,7 +6,6 @@ import java.awt.*;
 
 import controller.PrescriptionController;
 import model.Prescription;
-import model.Patient;
 
 public class PrescriptionPanel extends JPanel {
 
@@ -18,15 +17,24 @@ public class PrescriptionPanel extends JPanel {
         this.controller = controller;
         setLayout(new BorderLayout());
 
+        // ✅ HEADINGS NOW MATCH CSV EXACTLY
         tableModel = new DefaultTableModel(
-        	    new String[]{
-        	        "Clinician ID", "Appointment ID", "Prescription Date",
-        	        "Medication", "Dosage", "Frequency", "Duration (days)",
-        	        "Quantity", "Instructions", "Pharmacy",
-        	        "Status", "Issue Date", "Collection Date"
-        	    }, 0
-        	);
-
+                new String[]{
+                        "clinician_id",
+                        "appointment_id",
+                        "prescription_date",
+                        "medication_name",
+                        "dosage",
+                        "frequency",
+                        "duration_days",
+                        "quantity",
+                        "instructions",
+                        "pharmacy_name",
+                        "status",
+                        "issue_date",
+                        "collection_date"
+                }, 0
+        );
 
         table = new JTable(tableModel);
         loadTableData();
@@ -35,34 +43,28 @@ public class PrescriptionPanel extends JPanel {
         add(createButtonPanel(), BorderLayout.SOUTH);
     }
 
-    /* =========================
-       LOAD TABLE DATA
-       ========================= */
     private void loadTableData() {
         tableModel.setRowCount(0);
 
         for (Prescription p : controller.getAllPrescriptions()) {
-        	tableModel.addRow(new Object[]{
-        		    p.getClinicianId(),
-        		    p.getAppointmentId(),
-        		    p.getPrescriptionDate(),
-        		    p.getMedicationName(),
-        		    p.getDosage(),
-        		    p.getFrequency(),
-        		    p.getDurationDays(),
-        		    p.getQuantity(),
-        		    p.getInstructions(),
-        		    p.getPharmacyName(),
-        		    p.getStatus(),
-        		    p.getIssueDate(),
-        		    p.getCollectionDate()
-        		});
+            tableModel.addRow(new Object[]{
+                    p.getClinicianId(),
+                    p.getAppointmentId(),
+                    p.getPrescriptionDate(),
+                    p.getMedicationName(),
+                    p.getDosage(),
+                    p.getFrequency(),
+                    p.getDurationDays(),
+                    p.getQuantity(),
+                    p.getInstructions(),
+                    p.getPharmacyName(),
+                    p.getStatus(),
+                    p.getIssueDate(),
+                    p.getCollectionDate()
+            });
         }
     }
 
-    /* =========================
-       BUTTON PANEL
-       ========================= */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 
@@ -78,25 +80,35 @@ public class PrescriptionPanel extends JPanel {
         return panel;
     }
 
-    /* =========================
-       ADD PRESCRIPTION
-       ========================= */
     private void addPrescription() {
-
-        JTextField id = new JTextField();
-        JTextField patientId = new JTextField();
-        JTextField medication = new JTextField();
+        JTextField clinicianId = new JTextField();
+        JTextField appointmentId = new JTextField();
+        JTextField prescriptionDate = new JTextField();
+        JTextField medicationName = new JTextField();
         JTextField dosage = new JTextField();
-        JTextField pharmacy = new JTextField();
-        JTextField status = new JTextField();
+        JTextField frequency = new JTextField();
+        JTextField durationDays = new JTextField();
+        JTextField quantity = new JTextField();
+        JTextField instructions = new JTextField();
+        JTextField pharmacyName = new JTextField();
+        JTextField status = new JTextField("Issued");
+        JTextField issueDate = new JTextField();
+        JTextField collectionDate = new JTextField();
 
         Object[] fields = {
-                "Prescription ID:", id,
-                "Patient ID:", patientId,
-                "Medication:", medication,
+                "Clinician ID:", clinicianId,
+                "Appointment ID:", appointmentId,
+                "Prescription Date:", prescriptionDate,
+                "Medication Name:", medicationName,
                 "Dosage:", dosage,
-                "Pharmacy:", pharmacy,
-                "Status:", status
+                "Frequency:", frequency,
+                "Duration Days:", durationDays,
+                "Quantity:", quantity,
+                "Instructions:", instructions,
+                "Pharmacy Name:", pharmacyName,
+                "Status:", status,
+                "Issue Date:", issueDate,
+                "Collection Date:", collectionDate
         };
 
         int option = JOptionPane.showConfirmDialog(
@@ -104,24 +116,25 @@ public class PrescriptionPanel extends JPanel {
         );
 
         if (option == JOptionPane.OK_OPTION) {
-
-            Prescription prescription = new Prescription(
-                    id.getText(),
-                    patientId.getText(),
-                    medication.getText(),
+            controller.addPrescription(new Prescription(
+                    clinicianId.getText(),
+                    appointmentId.getText(),
+                    prescriptionDate.getText(),
+                    medicationName.getText(),
                     dosage.getText(),
-                    pharmacy.getText(),
-                    status.getText()
-            );
-
-            controller.addPrescription(prescription);
+                    frequency.getText(),
+                    durationDays.getText(),
+                    quantity.getText(),
+                    instructions.getText(),
+                    pharmacyName.getText(),
+                    status.getText(),
+                    issueDate.getText(),
+                    collectionDate.getText()
+            ));
             loadTableData();
         }
     }
 
-    /* =========================
-       DELETE PRESCRIPTION
-       ========================= */
     private void deletePrescription() {
         int row = table.getSelectedRow();
 
@@ -131,17 +144,9 @@ public class PrescriptionPanel extends JPanel {
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to delete this prescription?",
-                "Confirm Delete",
-                JOptionPane.YES_NO_OPTION
+        controller.deletePrescription(
+                controller.getAllPrescriptions().get(row)
         );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            Prescription p = controller.getAllPrescriptions().get(row);
-            controller.deletePrescription(p);
-            loadTableData();
-        }
+        loadTableData();
     }
 }
