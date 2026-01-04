@@ -6,25 +6,25 @@ import model.AppointmentRepository;
 
 public class AppointmentController {
 
-    private AppointmentRepository appointmentRepository;
+    private AppointmentRepository repository;
 
-    public AppointmentController(AppointmentRepository appointmentRepository) {
-        this.appointmentRepository = appointmentRepository;
+    public AppointmentController(AppointmentRepository repository) {
+        this.repository = repository;
     }
 
     public void loadAppointments() {
-        appointmentRepository.loadAppointments();
+        repository.loadAppointments();
     }
 
     public List<Appointment> getAllAppointments() {
-        return appointmentRepository.getAllAppointments();
+        return repository.getAllAppointments();
     }
 
     public void addAppointment(Appointment appointment) {
-        appointmentRepository.addAppointment(appointment);
+        repository.addAppointment(appointment);
     }
 
     public void deleteAppointment(Appointment appointment) {
-        appointmentRepository.removeAppointment(appointment);
+        repository.removeAppointment(appointment);
     }
 }

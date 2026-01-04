@@ -1,6 +1,8 @@
 package model;
 
 import util.CSVReader;
+import util.CSVWriter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,28 +16,13 @@ public class AppointmentRepository {
         appointments.clear();
 
         for (String[] row : rows) {
+            if (row[0].equalsIgnoreCase("appointment_id")) continue;
 
-            if (row[0].equalsIgnoreCase("appointment_id")) {
-                continue;
-            }
-
-            Appointment appointment = new Appointment(
-                    row[0],  // appointment_id
-                    row[1],  // patient_id
-                    row[2],  // clinician_id
-                    row[3],  // facility_id
-                    row[4],  // appointment_date
-                    row[5],  // appointment_time
-                    row[6],  // duration_minutes
-                    row[7],  // appointment_type
-                    row[8],  // status
-                    row[9],  // reason_for_visit
-                    row[10], // notes
-                    row[11], // created_date
-                    row[12]  // last_modified
-            );
-
-            appointments.add(appointment);
+            appointments.add(new Appointment(
+                    row[0], row[1], row[2], row[3],
+                    row[4], row[5], row[6], row[7],
+                    row[8], row[9], row[10], row[11], row[12]
+            ));
         }
     }
 
@@ -45,14 +32,39 @@ public class AppointmentRepository {
 
     public void addAppointment(Appointment appointment) {
         appointments.add(appointment);
+        rewriteCSV();
     }
 
-    public void deleteAppointment(Appointment appointment) {
-        appointments.remove(appointment);
-    }
-
-    // ✅ REQUIRED FIX
     public void removeAppointment(Appointment appointment) {
-        deleteAppointment(appointment);
+        appointments.remove(appointment);
+        rewriteCSV();
+    }
+
+    private void rewriteCSV() {
+
+        CSVWriter.overwrite(FILE_PATH,
+                "appointment_id,patient_id,clinician_id,facility_id," +
+                "appointment_date,appointment_time,duration_minutes," +
+                "appointment_type,status,reason_for_visit,notes," +
+                "created_date,last_modified"
+        );
+
+        for (Appointment a : appointments) {
+            CSVWriter.append(FILE_PATH, String.join(",",
+                    a.getAppointmentId(),
+                    a.getPatientId(),
+                    a.getClinicianId(),
+                    a.getFacilityId(),
+                    a.getAppointmentDate(),
+                    a.getAppointmentTime(),
+                    a.getDurationMinutes(),
+                    a.getAppointmentType(),
+                    a.getStatus(),
+                    a.getReasonForVisit(),
+                    a.getNotes(),
+                    a.getCreatedDate(),
+                    a.getLastModified()
+            ));
+        }
     }
 }

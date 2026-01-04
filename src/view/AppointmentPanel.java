@@ -11,37 +11,39 @@ public class AppointmentPanel extends JPanel {
 
     private AppointmentController controller;
     private JTable table;
-    private DefaultTableModel tableModel;
+    private DefaultTableModel model;
 
     public AppointmentPanel(AppointmentController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
 
-        tableModel = new DefaultTableModel(
-                new String[]{
-                        "Appointment ID",
-                        "Patient ID",
-                        "Clinician ID",
-                        "Facility ID",
-                        "Date",
-                        "Time",
-                        "Duration (min)",
-                        "Status"
-                }, 0
-        );
+        model = new DefaultTableModel(new String[]{
+                "appointment_id",
+                "patient_id",
+                "clinician_id",
+                "facility_id",
+                "appointment_date",
+                "appointment_time",
+                "duration_minutes",
+                "appointment_type",
+                "status",
+                "reason_for_visit",
+                "notes",
+                "created_date",
+                "last_modified"
+        }, 0);
 
-        table = new JTable(tableModel);
-        loadTableData();
+        table = new JTable(model);
+        loadData();
 
         add(new JScrollPane(table), BorderLayout.CENTER);
-        add(createButtonPanel(), BorderLayout.SOUTH);
+        add(buttonPanel(), BorderLayout.SOUTH);
     }
 
-    private void loadTableData() {
-        tableModel.setRowCount(0);
-
+    private void loadData() {
+        model.setRowCount(0);
         for (Appointment a : controller.getAllAppointments()) {
-            tableModel.addRow(new Object[]{
+            model.addRow(new Object[]{
                     a.getAppointmentId(),
                     a.getPatientId(),
                     a.getClinicianId(),
@@ -49,50 +51,73 @@ public class AppointmentPanel extends JPanel {
                     a.getAppointmentDate(),
                     a.getAppointmentTime(),
                     a.getDurationMinutes(),
-                    a.getStatus()
+                    a.getAppointmentType(),
+                    a.getStatus(),
+                    a.getReasonForVisit(),
+                    a.getNotes(),
+                    a.getCreatedDate(),
+                    a.getLastModified()
             });
         }
     }
 
-    private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+    private JPanel buttonPanel() {
+        JPanel p = new JPanel();
 
-        JButton addBtn = new JButton("Add Appointment");
-        JButton deleteBtn = new JButton("Delete Appointment");
+        JButton add = new JButton("Add Appointment");
+        JButton del = new JButton("Delete Appointment");
 
-        addBtn.addActionListener(e -> JOptionPane.showMessageDialog(
-                this, "Add Appointment not implemented yet."
-        ));
+        add.addActionListener(e -> addAppointment());
+        del.addActionListener(e -> deleteAppointment());
 
-        deleteBtn.addActionListener(e -> deleteAppointment());
+        p.add(add);
+        p.add(del);
+        return p;
+    }
 
-        panel.add(addBtn);
-        panel.add(deleteBtn);
+    private void addAppointment() {
 
-        return panel;
+        JTextField[] f = new JTextField[13];
+        for (int i = 0; i < f.length; i++) f[i] = new JTextField();
+
+        Object[] fields = {
+                "Appointment ID", f[0],
+                "Patient ID", f[1],
+                "Clinician ID", f[2],
+                "Facility ID", f[3],
+                "Appointment Date", f[4],
+                "Appointment Time", f[5],
+                "Duration Minutes", f[6],
+                "Appointment Type", f[7],
+                "Status", f[8],
+                "Reason For Visit", f[9],
+                "Notes", f[10],
+                "Created Date", f[11],
+                "Last Modified", f[12]
+        };
+
+        if (JOptionPane.showConfirmDialog(this, fields,
+                "Add Appointment", JOptionPane.OK_CANCEL_OPTION)
+                == JOptionPane.OK_OPTION) {
+
+            controller.addAppointment(new Appointment(
+                    f[0].getText(), f[1].getText(), f[2].getText(),
+                    f[3].getText(), f[4].getText(), f[5].getText(),
+                    f[6].getText(), f[7].getText(), f[8].getText(),
+                    f[9].getText(), f[10].getText(), f[11].getText(),
+                    f[12].getText()
+            ));
+            loadData();
+        }
     }
 
     private void deleteAppointment() {
         int row = table.getSelectedRow();
+        if (row == -1) return;
 
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Please select an appointment to delete.");
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to delete this appointment?",
-                "Confirm Delete",
-                JOptionPane.YES_NO_OPTION
+        controller.deleteAppointment(
+                controller.getAllAppointments().get(row)
         );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            Appointment appointment =
-                    controller.getAllAppointments().get(row);
-            controller.deleteAppointment(appointment);
-            loadTableData();
-        }
+        loadData();
     }
 }
